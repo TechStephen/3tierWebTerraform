@@ -4,9 +4,9 @@ resource "aws_lb" "app_lb" {
   internal = false # allows load balancer to be accessible to the internet and not private within the vpc
   load_balancer_type = "application"
   security_groups = [aws_security_group.public_sg.id]
-  subnets = [var.public_subnet_id_1, var.public_subnet_id_2]
+  subnets = [var.subnet_ids[0], var.subnet_ids[1]]
 
-  enable_deletion_protection = false # prevents accidental deletion when set to true 
+  enable_deletion_protection = true # prevents accidental deletion when set to true 
 
   # stops from destroying and rebuilding every apply
   # lifecycle {
@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "lb_tg" {
 # attaches ec2 to target group 
 resource "aws_lb_target_group_attachment" "attach_first_instance" {
   target_group_arn = aws_lb_target_group.lb_tg.arn
-  target_id = aws_instance.public_instance_1.id
+  target_id = aws_instance.private_instance_1
   port = 80
 }
 

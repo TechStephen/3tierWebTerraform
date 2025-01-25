@@ -16,11 +16,11 @@ resource "aws_autoscaling_group" "app_asg" {
   }
 
   target_group_arns = [aws_lb_target_group.lb_tg.arn]
-  vpc_zone_identifier = [var.public_subnet_id_1, var.public_subnet_id_2, var.private_subnet_id_1, var.private_subnet_id_2] 
+  vpc_zone_identifier = [var.subnet_ids[0], var.subnet_ids[1]] 
 
   desired_capacity = 2
-  max_size = 3
-  min_size = 1
+  max_size = 4
+  min_size = 2
 
   # health_check_type = "ec2"
   # health_check_grace_period = 300

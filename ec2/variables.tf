@@ -3,24 +3,9 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "public_subnet_id_1" {
-  description = "The ID of the 1st subnet to deploy the EC2 instance"
-  type        = string
-}
-
-variable "public_subnet_id_2" {
-  description = "The ID of the 2nd subnet to deploy the EC2 instance"
-  type        = string
-}
-
-variable "private_subnet_id_1" {
-  description = "The ID of the 1st subnet to deploy the EC2 instance"
-  type        = string
-}
-
-variable "private_subnet_id_2" {
-  description = "The ID of the 2nd subnet to deploy the EC2 instance"
-  type        = string
+variable "subnet_ids" {
+  description = "The IDs of the subnets for the app"
+  type        = list(string)  
 }
 
 variable "instance_profile_id" {
