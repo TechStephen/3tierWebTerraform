@@ -1,0 +1,35 @@
+{
+    "metrics": {
+      "namespace": "EC2/CloudWatchAgent",
+      "metrics_collected": {
+        "cpu": {
+          "measurement": ["cpu_usage_idle", "cpu_usage_iowait"],
+          "metrics_collection_interval": 60
+        },
+        "disk": {
+          "measurement": ["disk_used_percent"],
+          "metrics_collection_interval": 60,
+          "resources": ["*"]
+        },
+        "mem": {
+          "measurement": ["mem_used_percent"],
+          "metrics_collection_interval": 60
+        }
+      }
+    },
+    "logs": {
+      "logs_collected": {
+        "files": {
+          "collect_list": [
+            {
+              "file_path": "/var/log/messages",
+              "log_group_name": "EC2-Logs",
+              "log_stream_name": "{instance_id}",
+              "timestamp_format": "%b %d %H:%M:%S"
+            }
+          ]
+        }
+      }
+    }
+  }
+  

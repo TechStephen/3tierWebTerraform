@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "lb_tg" {
 # attaches ec2 to target group 
 resource "aws_lb_target_group_attachment" "attach_first_instance" {
   target_group_arn = aws_lb_target_group.lb_tg.arn
-  target_id = aws_instance.private_instance_1
+  target_id = aws_instance.public_instance_1.id
   port = 80
 }
 

@@ -8,7 +8,7 @@ resource "aws_vpc" "my_vpc" {
     }
 }
 
-# create public subnet 1 (us-east-1a)
+# create private subnet 1 (us-east-1a)
 resource "aws_subnet" "private_subnet_1" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.1.0/24"
@@ -20,7 +20,7 @@ resource "aws_subnet" "private_subnet_1" {
     }
 }
 
-# create public subnet 2 (us-east-1b)
+# create private subnet 2 (us-east-1b)
 resource "aws_subnet" "private_subnet_2" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.2.0/24"
@@ -32,7 +32,7 @@ resource "aws_subnet" "private_subnet_2" {
     }
 }
 
-# create private subnet 1 (us-east-1a)
+# create private subnet 3 (us-east-1a)
 resource "aws_subnet" "private_subnet_3" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.3.0/24"
@@ -44,7 +44,7 @@ resource "aws_subnet" "private_subnet_3" {
     }
 }
 
-# create private subnet 2 (us-east-1b)
+# create private subnet 4 (us-east-1b)
 resource "aws_subnet" "private_subnet_4" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.4.0/24"

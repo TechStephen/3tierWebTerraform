@@ -9,6 +9,6 @@ variable "subnet_ids" {
 }
 
 variable "instance_profile_id" {
-  description = "The ID of the instance profile for admin access to dynamo"
+  description = "The ID of the instance profile"
   type        = string
 }

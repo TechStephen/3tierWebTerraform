@@ -1,4 +1,4 @@
-# Security group that allows inbound and outbound traffic
+# Security group that configures traffic
 resource "aws_security_group" "public_sg" {
   name = "public_sg"
   description = "Allow inbound and outbound traffic"
@@ -34,13 +34,14 @@ resource "aws_security_group" "public_sg" {
   }
 }
 
+# SG That allows communication between FE and BE
 resource "aws_security_group" "private_sg" {
-  name = "public_sg"
+  name = "privat_sg"
   description = "Allow fe and be to communicate with each other traffic"
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "PublicSecurityGroup"
+    Name = "PrivateSecurityGroup"
   }
 
   # Inbound HTTP for communication between FE and BE within the same SG
@@ -48,7 +49,7 @@ resource "aws_security_group" "private_sg" {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    security_groups  = [aws_security_group.private_sg.id]  # Allow communication within the same security group
+    security_groups  = [aws_security_group.public_sg.id]  # Allow communication within the same security group
   }
 
   # outbound traffic (allow all)
