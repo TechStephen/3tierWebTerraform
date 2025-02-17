@@ -12,3 +12,13 @@ variable "instance_profile_id" {
   description = "The ID of the instance profile"
   type        = string
 }
+
+variable "public_security_group_id" {
+  description = "The ID of the public security group"
+  type        = string
+}
+
+variable "private_security_group_id" {
+  description = "The ID of the private security group"
+  type        = string
+}

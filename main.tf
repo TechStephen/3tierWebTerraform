@@ -12,17 +12,24 @@ terraform {
     }
 }
 
-module "iam" {
-  source = "./iam"
+module "VPC" {
+  source = "./VPC"
 }
 
-module "vpc" {
-  source = "./vpc"
+module "Security_Group" {
+  source = "./SecurityGroup"
+  vpc_id = module.VPC.vpc_id
 }
 
-module "ec2" {
-  source = "./ec2"
-  vpc_id = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnet_ids
-  instance_profile_id = module.iam.instance_profile_id
+module "IAM" {
+  source = "./IAM"
+}
+
+module "EC2" {
+  source = "./EC2"
+  vpc_id = module.VPC.vpc_id
+  subnet_ids = module.VPC.private_subnet_ids
+  instance_profile_id = module.IAM.instance_profile_id
+  public_security_group_id = module.Security_Group.public_security_group_id
+  private_security_group_id = module.Security_Group.private_security_group_id
 }
