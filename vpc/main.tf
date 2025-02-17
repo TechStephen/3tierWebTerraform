@@ -1,4 +1,4 @@
-# create vpc
+# Creates vpc
 resource "aws_vpc" "my_vpc" {
     cidr_block = "10.0.0.0/16" # provide cidr block
     enable_dns_support = true
@@ -8,7 +8,7 @@ resource "aws_vpc" "my_vpc" {
     }
 }
 
-# create private subnet 1 (us-east-1a)
+# Creates private subnet 1 (us-east-1a)
 resource "aws_subnet" "private_subnet_1" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.1.0/24"
@@ -20,7 +20,7 @@ resource "aws_subnet" "private_subnet_1" {
     }
 }
 
-# create private subnet 2 (us-east-1b)
+# Creates private subnet 2 (us-east-1b)
 resource "aws_subnet" "private_subnet_2" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.2.0/24"
@@ -32,7 +32,7 @@ resource "aws_subnet" "private_subnet_2" {
     }
 }
 
-# create private subnet 3 (us-east-1a)
+# Creates private subnet 3 (us-east-1a)
 resource "aws_subnet" "private_subnet_3" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.3.0/24"
@@ -54,14 +54,6 @@ resource "aws_subnet" "private_subnet_4" {
     tags = {
       Name = "PrivateSubnet4"
     }
-}
-
-# Create vpc endpoint to hook up dynamodb
-resource "aws_vpc_endpoint" "my_vpc_endpoint" {
-  vpc_endpoint_type = "Gateway"
-  vpc_id = aws_vpc.my_vpc.id
-  service_name = "com.amazonaws.us-east-1.dynamodb" # connects wth dynamodb table associated with my account through this region
-  route_table_ids = [aws_route_table.private_route_table.id]
 }
 
 # Create internet gateway
@@ -117,4 +109,12 @@ resource "aws_route_table_association" "private_subnet_3_association" {
 resource "aws_route_table_association" "private_subnet_4_association" {
   subnet_id = aws_subnet.private_subnet_4.id
   route_table_id = aws_route_table.private_route_table.id
+}
+
+# Creates vpc endpoint to hook up dynamodb
+resource "aws_vpc_endpoint" "my_vpc_endpoint" {
+  vpc_endpoint_type = "Gateway"
+  vpc_id = aws_vpc.my_vpc.id
+  service_name = "com.amazonaws.us-east-1.dynamodb" # connects wth dynamodb table associated with my account through this region
+  route_table_ids = [aws_route_table.private_route_table.id]
 }

@@ -1,4 +1,5 @@
 
+########### EC2 INSTANCES ###########
 resource "aws_instance" "public_instance_1" {
   ami = "ami-063d43db0594b521b"  # Check if this is correct for your region and architecture
   instance_type = "t2.micro"
@@ -81,6 +82,8 @@ resource "aws_instance" "private_instance_2" {
   }
 }
 
+########### ELASTIC IPs ###########
+
 resource "aws_eip" "eip_one" {
   instance = aws_instance.public_instance_1.id
 }
@@ -89,11 +92,15 @@ resource "aws_eip" "eip_two" {
   instance = aws_instance.public_instance_2.id
 }
 
+########### SSM Parameter Store for CloudWatch Logs ###########
+
 resource "aws_ssm_parameter" "cw_log_param" {
   name  = "/AmazonCloudWatch-linux"
   type  = "String"
   value = file("cloudwatch-agent-config.json")
 }
+
+########### EC2 INSTANCE Private Key (.pem) Creation ###########
 
 resource "tls_private_key" "my_key" {
   algorithm = "RSA"
@@ -120,6 +127,8 @@ resource "local_file" "private_key" {
   filename = "./my_key_pair_two.pem"
 }
 
+########### AUTO SCALING GROUP (LAUNCH CONFIG / SCALING STRATEGY) ###########
+
 # When scaling in and out what instance type/size do you want to add
 resource "aws_launch_template" "asg_launch_template" {
   instance_type = "t2.micro"
@@ -127,7 +136,7 @@ resource "aws_launch_template" "asg_launch_template" {
   image_id = "ami-063d43db0594b521b"
 }
 
-# create auto scaling group
+# Create auto scaling group
 resource "aws_autoscaling_group" "app_asg" {
   name = "app-asg"
 
@@ -166,7 +175,9 @@ resource "aws_autoscaling_policy" "scale_out" {
   adjustment_type = "ChangeInCapacity"
 }
 
-# creates load balancer
+########### APPLICATION LOAD BALANCER ###########
+
+# Creates load balancer
 resource "aws_lb" "app_lb" {
   name = "my-app-lb"
   internal = false # allows load balancer to be accessible to the internet and not private within the vpc
