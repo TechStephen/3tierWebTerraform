@@ -12,3 +12,6 @@
 crash.log
 .terraform/
 .terraform.lock.hcl
+
+# Ignore .zips
+*.zip

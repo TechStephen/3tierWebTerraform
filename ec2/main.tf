@@ -56,32 +56,6 @@ resource "aws_instance" "public_instance_2" {
   }
 }
 
-resource "aws_instance" "private_instance_1" {
-  ami = "ami-063d43db0594b521b"  # Check if this is correct for your region and architecture
-  instance_type = "t2.micro"
-  subnet_id = var.subnet_ids[2]  # Ensure you're using .id, not .vpc_id
-  security_groups = [var.private_security_group_id]
-
-  iam_instance_profile = var.instance_profile_id # For dynamodb access
-
-  tags = {
-    Name = "PrivateSubnet1BE"
-  }
-}
-
-resource "aws_instance" "private_instance_2" {
-  ami = "ami-063d43db0594b521b"
-  instance_type = "t2.micro"
-  subnet_id = var.subnet_ids[3]  # Ensure you're using .id, not .vpc_id
-  security_groups = [var.private_security_group_id]
-
-  iam_instance_profile = var.instance_profile_id
-
-  tags = {
-    Name = "PrivateSubnet2BE"
-  }
-}
-
 ########### ELASTIC IPs ###########
 
 resource "aws_eip" "eip_one" {
