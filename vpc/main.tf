@@ -8,55 +8,55 @@ resource "aws_vpc" "my_vpc" {
     }
 }
 
-# Creates private subnet 1 (us-east-1a)
-resource "aws_subnet" "private_subnet_1" {
+# Creates public subnet 1 for load balancer (us-east-1a)
+resource "aws_subnet" "lb_public_subnet_1" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.1.0/24"
     availability_zone = "us-east-1a"
     map_public_ip_on_launch = false
 
     tags = {
-      Name = "PrivateSubnet1"
+      Name = "LoadBalancerPublicSubnet1"
     }
 }
 
-# Creates private subnet 2 (us-east-1b)
-resource "aws_subnet" "private_subnet_2" {
+# Creates public subnet 2 for load balancer (us-east-1b)
+resource "aws_subnet" "lb_public_subnet_2" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.2.0/24"
     availability_zone = "us-east-1b"
     map_public_ip_on_launch = false
 
     tags = {
-      Name = "PrivateSubnet2"
+      Name = "LoadBalancerPublicSubnet2"
     }
 }
 
-# Creates private subnet 3 (us-east-1a)
-resource "aws_subnet" "private_subnet_3" {
+# Creates private subnet 1 for ec2  (us-east-1a)
+resource "aws_subnet" "ec2_private_subnet_1" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.3.0/24"
     availability_zone = "us-east-1a"
     map_public_ip_on_launch = false
 
     tags = {
-      Name = "PrivateSubnet3"
+      Name = "EC2PrivateSubnet1"
     }
 }
 
-# create private subnet 4 (us-east-1b)
-resource "aws_subnet" "private_subnet_4" {
+# Creates private subnet 2 for ec2 (us-east-1b)
+resource "aws_subnet" "ec2_private_subnet_2" {
     vpc_id = aws_vpc.my_vpc.id
     cidr_block = "10.0.4.0/24"
     availability_zone = "us-east-1b"
     map_public_ip_on_launch = false
 
     tags = {
-      Name = "PrivateSubnet4"
+      Name = "EC2PrivateSubnet2"
     }
 }
 
-# Create internet gateway
+# Creates internet gateway
 resource "aws_internet_gateway" "my_igw" {
     vpc_id = aws_vpc.my_vpc.id
     tags = {
@@ -64,7 +64,7 @@ resource "aws_internet_gateway" "my_igw" {
     }
 }
 
-# Create route table (needed to connect to igw)
+# Creates route table (needed to connect to igw)
 resource "aws_route_table" "public_route_table" {
     vpc_id = aws_vpc.my_vpc.id
     tags = {
@@ -72,26 +72,26 @@ resource "aws_route_table" "public_route_table" {
     }
 }
 
-# Create route connect subnet to internet gateway
+# Creates route connect subnet to internet gateway
 resource "aws_route" "public_internet_route" {
     destination_cidr_block = "0.0.0.0/0"
     route_table_id = aws_route_table.public_route_table.id
     gateway_id = aws_internet_gateway.my_igw.id
 }
 
-# Connect Public Subnet 1 to Route Table
-resource "aws_route_table_association" "private_subnet_1_association" {
-  subnet_id = aws_subnet.private_subnet_1.id
+# Connect Load Balancer Public Subnet 1 to Route Table
+resource "aws_route_table_association" "lb_public_subnet_association_1" {
+  subnet_id = aws_subnet.lb_public_subnet_1.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
-# Connect Public Subnet 2 to Route Table
-resource "aws_route_table_association" "private_subnet_2_association" {
-  subnet_id = aws_subnet.private_subnet_2.id
+# Connect Load Balancer Public Subnet 2 to Route Table
+resource "aws_route_table_association" "lb_public_subnet_association_2" {
+  subnet_id = aws_subnet.lb_public_subnet_2.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
-# Create Private Route Table (For DynamoDB AWS will automatically configure route)
+# Creates Private Route Table (For DynamoDB, AWS will automatically configure route)
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.my_vpc.id
   tags = {
@@ -99,15 +99,15 @@ resource "aws_route_table" "private_route_table" {
   }
 }
 
-# Connect Private Subnet 3 to Route Table 
+# Connect EC2 Private Subnet 1 to Private Route Table 
 resource "aws_route_table_association" "private_subnet_3_association" {
-  subnet_id = aws_subnet.private_subnet_3.id
+  subnet_id = aws_subnet.ec2_private_subnet_1.id
   route_table_id = aws_route_table.private_route_table.id
 }
 
-# Connect Private Subnet 4 to Route Table 
+# Connect EC2 Private Subnet 2 to Private Route Table 
 resource "aws_route_table_association" "private_subnet_4_association" {
-  subnet_id = aws_subnet.private_subnet_4.id
+  subnet_id = aws_subnet.ec2_private_subnet_2.id
   route_table_id = aws_route_table.private_route_table.id
 }
 

@@ -1,62 +1,75 @@
-# Security group that configures traffic
+# Public Security Group (For Load Balancer - ALB)
 resource "aws_security_group" "public_sg" {
-  name = "public_sg"
-  description = "Allow inbound and outbound traffic"
-  vpc_id = var.vpc_id
+  name        = "public_sg"
+  description = "Allow inbound and outbound traffic for Load Balancer"
+  vpc_id      = var.vpc_id
 
   tags = {
     Name = "PublicSecurityGroup"
   }
 
-  # inbound traffic (allow all http, tcp helps secure connection)
-  # For HTTPS (443) needs certificate (AWS Certificate Manager)
+  # Allow inbound HTTP (80) from anywhere (for ALB)
   ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTP traffic from anywhere"
   }
 
-  # inbound traffic (allow all ssh, tcp helps secure connection)
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # limit in production
-  }
+  # Allow inbound HTTPS (443) from anywhere (if HTTPS is used)
+  #ingress {
+  #  from_port   = 443
+  #  to_port     = 443
+  #  protocol    = "tcp"
+  #  cidr_blocks = ["0.0.0.0/0"]
+  #  description = "Allow HTTPS traffic from anywhere"
+  #}
 
-  # outbound traffic (allow all)
+  # Allow outbound traffic to EC2 instances (BE)
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
 }
 
-# SG That allows communication between FE and BE
+# Private Security Group (For EC2 instances in ASG)
 resource "aws_security_group" "private_sg" {
-  name = "privat_sg"
-  description = "Allow fe and be to communicate with each other traffic"
-  vpc_id = var.vpc_id
+  name        = "private_sg"
+  description = "Allow ALB to communicate with EC2 instances"
+  vpc_id      = var.vpc_id
 
   tags = {
     Name = "PrivateSecurityGroup"
   }
 
-  # Inbound HTTP for communication between FE and BE within the same SG
+  # Allow inbound HTTP from ALB only
   ingress {
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    security_groups  = [aws_security_group.public_sg.id]  # Allow communication within the same security group
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.public_sg.id]  # Only allow ALB to send traffic
+    description     = "Allow HTTP traffic from ALB"
   }
 
-  # outbound traffic (allow all)
+  # Allow EC2 instances to access DynamoDB (Dynamodb uses 443, is not strictly for HTTP)
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # AWS DynamoDB is a global service
+    description = "Allow EC2 instances to access DynamoDB"
+  }
+
+  # Allow outbound internet access
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic (via NAT if private)"
   }
 }

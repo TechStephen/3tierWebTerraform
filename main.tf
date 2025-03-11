@@ -39,7 +39,7 @@ module "Lambda" {
 module "EC2" {
   source = "./ec2"
   vpc_id = module.VPC.vpc_id
-  subnet_ids = module.VPC.private_subnet_ids
+  subnet_ids = module.VPC.subnet_ids
   instance_profile_id = module.IAM.instance_profile_id
   public_security_group_id = module.Security_Groups.public_security_group_id
   private_security_group_id = module.Security_Groups.private_security_group_id

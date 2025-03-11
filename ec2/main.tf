@@ -4,11 +4,11 @@ resource "aws_instance" "public_instance_1" {
   ami = "ami-063d43db0594b521b"  # Check if this is correct for your region and architecture
   instance_type = "t2.micro"
   key_name = aws_key_pair.my_key_pair.key_name
-  subnet_id = var.subnet_ids[0]  # Ensure you're using .id, not .vpc_id
+  subnet_id = var.subnet_ids[2]  # Ensure you're using .id, not .vpc_id
   security_groups = [var.public_security_group_id]
 
   tags = {
-    Name = "PublicSubnet1FE"
+    Name = "PrivateSubnet1FE"
   }
 
   # Install dependancies and cloud watch agent with config in SSM Parameter Store
@@ -35,7 +35,7 @@ resource "aws_instance" "public_instance_2" {
   ami = "ami-063d43db0594b521b"
   instance_type = "t2.micro"
   key_name = aws_key_pair.my_key_pair_two.key_name
-  subnet_id = var.subnet_ids[1]  # Ensure you're using .id, not .vpc_id
+  subnet_id = var.subnet_ids[3]  # Ensure you're using .id, not .vpc_id
   security_groups = [var.public_security_group_id]
 
   user_data = <<-EOF
@@ -52,7 +52,7 @@ resource "aws_instance" "public_instance_2" {
   EOF
 
   tags = {
-    Name = "PublicSubnet2FE"
+    Name = "PrivateSubnet2FE"
   }
 }
 
